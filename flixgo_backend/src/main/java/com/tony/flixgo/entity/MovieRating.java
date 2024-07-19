@@ -31,10 +31,10 @@ public class MovieRating {
     private User user;
 
     @Column(name = "star_rating")
-    private String starRating;
+    private int starRating;
 
     @Column(name = "review_title")
-    private int reviewTitle;
+    private String reviewTitle;
 
     @Column(name = "content")
     private String content;

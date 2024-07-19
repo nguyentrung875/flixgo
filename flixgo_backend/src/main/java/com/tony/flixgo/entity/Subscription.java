@@ -26,6 +26,9 @@ public class Subscription {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "price")
+    private int price;
+
     @OneToMany(mappedBy = "subscription")
-    private Set<SubscriptionUser> subscriptionUserSet;
+    private Set<Order> orders;
 }

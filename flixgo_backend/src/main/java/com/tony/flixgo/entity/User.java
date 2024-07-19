@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -32,7 +33,7 @@ public class User {
     private String password;
 
     @Column(name = "create_date")
-    private LocalDate createDate = LocalDate.now();
+    private LocalDateTime createDate;
 
     @ManyToOne
     @JoinColumn(name = "id_role", nullable=false)
@@ -45,5 +46,5 @@ public class User {
     private Set<MovieRating> movieRatings;
 
     @OneToMany(mappedBy = "user")
-    private Set<SubscriptionUser> subscriptionUserSet;
+    private Set<Order> orders;
 }

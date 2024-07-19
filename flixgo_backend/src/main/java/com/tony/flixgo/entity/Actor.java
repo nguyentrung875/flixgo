@@ -1,5 +1,6 @@
 package com.tony.flixgo.entity;
 
+import com.tony.flixgo.entity.constantenum.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,8 +24,9 @@ public class Actor {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "gender")
-    private Character gender;
+    @Enumerated
+    @Column(name = "gender", columnDefinition = "enum('F', 'M')")
+    private Gender gender;
 
     @Column(name = "avatar")
     private String avatar;

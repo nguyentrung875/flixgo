@@ -1,5 +1,6 @@
 package com.tony.flixgo.entity;
 
+import com.tony.flixgo.entity.constantenum.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,8 +37,9 @@ public class UserDetail {
     @Column(name = "dob")
     private LocalDate dob;
 
-    @Column(name = "gender")
-    private Character gender;
+    @Enumerated
+    @Column(name = "gender", columnDefinition = "enum('F', 'M')")
+    private Gender gender;
 
     @Column(name = "phone")
     private String phone;

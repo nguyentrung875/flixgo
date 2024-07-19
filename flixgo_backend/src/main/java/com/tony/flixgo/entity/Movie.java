@@ -1,5 +1,6 @@
 package com.tony.flixgo.entity;
 
+import com.tony.flixgo.entity.constantenum.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,8 +43,9 @@ public class Movie {
     @Column(name = "views")
     private int views;
 
-    @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", columnDefinition = "enum('Visible', 'Hidden')")
+    private Status status;
 
     @Column(name = "imdb")
     private int imdb;

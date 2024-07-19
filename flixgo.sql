@@ -78,7 +78,7 @@ CREATE TABLE movie_director(
 );
 
 CREATE TABLE quality(
-	id int,
+	id int auto_increment,
 	description varchar(20),
 	
 	primary key (id)
@@ -86,15 +86,15 @@ CREATE TABLE quality(
 
 CREATE TABLE movie (
 	id int auto_increment,
-	title varchar(100) not null,
-	subtitle varchar(100),
+	title varchar(255) not null,
+	subtitle varchar(255),
 	release_date date,
 	description text,
-	age_limit TINYINT,
+	age_limit int,
 	duration int ,
 	views int default 3000,
 	status enum('Visible', 'Hidden'),
-	imdb TINYINT,
+	imdb int,
 	poster_img text,
 	trailer_link text,
 	movie_link text,
@@ -119,22 +119,16 @@ CREATE TABLE movie_comment (
 CREATE TABLE movie_rating (
 	id_movie int,
 	id_user varchar(128),
-	star_rating TINYINT,
+	star_rating int,
 	review_title varchar(100),
 	content varchar(255),
 	create_time timestamp not null default CURRENT_TIMESTAMP(),
+	wishlist boolean default false,
+	wacthed boolean default false,
 	
 	primary key (id_movie, id_user)
 );
 
-CREATE TABLE movie_user(
-	id_movie int,
-	id_user varchar(128),
-	wishlist boolean default false,
-	wacthed boolean default false,
-	
-	primary key(id_user, id_movie)
-);
 
 CREATE TABLE roles(
 	id int auto_increment,
@@ -144,17 +138,18 @@ CREATE TABLE roles(
 	primary key(id)
 );
 
-CREATE TABLE membership(
+CREATE TABLE subscription(
 	id int auto_increment,
 	name varchar(20) not null,
 	description text,
+	price int,
 	
 	primary key(id)
 );
 
-CREATE TABLE membership_user(
+CREATE TABLE orders(
 	id int auto_increment,
-	id_membership int, 
+	id_subscription int, 
 	id_user varchar(128),
 	start_date timestamp not null,
 	end_date timestamp not null,
@@ -166,10 +161,9 @@ CREATE TABLE users(
 	id varchar(128),
 	username varchar(100) not null,
 	password varchar(255) not null,
-	id_role int,
-	id_membership int,
-	create_date timestamp not null default CURRENT_TIMESTAMP(),
-	
+	create_date timestamp default CURRENT_TIMESTAMP(),
+	id_role int not null,
+
 	unique (username),
 	primary key(id)
 );
@@ -204,24 +198,33 @@ ALTER TABLE movie_comment ADD CONSTRAINT fk_movie_comment_id_movie FOREIGN KEY(i
 ALTER TABLE movie_comment ADD CONSTRAINT fk_movie_comment_id_user FOREIGN KEY(id_user) REFERENCES users(id);
 ALTER TABLE movie_rating ADD CONSTRAINT fk_movie_rating_id_movie FOREIGN KEY(id_movie) REFERENCES movie(id);
 ALTER TABLE movie_rating ADD CONSTRAINT fk_movie_rating_id_user FOREIGN KEY(id_user) REFERENCES users(id);
-ALTER TABLE movie_user ADD CONSTRAINT fk_movie_user_id_user FOREIGN KEY(id_user) REFERENCES users(id);
-ALTER TABLE movie_user ADD CONSTRAINT fk_movie_user_id_movie FOREIGN KEY(id_movie) REFERENCES movie(id);
 ALTER TABLE user_detail ADD CONSTRAINT fk_user_detail_id_user FOREIGN KEY(id_user) REFERENCES users(id);
 ALTER TABLE users ADD CONSTRAINT fk_users_id_role FOREIGN KEY(id_role) REFERENCES roles(id);
-ALTER TABLE membership_user ADD CONSTRAINT fk_membership_user_id_membership FOREIGN KEY(id_membership) REFERENCES membership(id);
-ALTER TABLE membership_user ADD CONSTRAINT fk_membership_user_id_user FOREIGN KEY(id_user) REFERENCES users(id);
+ALTER TABLE orders ADD CONSTRAINT fk_orders_id_subscription FOREIGN KEY(id_subscription) REFERENCES subscription(id);
+ALTER TABLE orders ADD CONSTRAINT fk_orders_id_user FOREIGN KEY(id_user) REFERENCES users(id);
 
+-- Tạo dữ liệu mẫu cho nhánh user
+INSERT INTO roles (name)
+VALUES
+('ADMIN'),
+('MODERATOR'),
+('USER')
+;
+
+INSERT INTO subscription (name, price)
+VALUES
+('Starter', 0),
+('Premium', 49000),
+('Cinematic', 99000)
+;
 
 -- Tạo dữ liệu mẫu
 INSERT INTO languages (name)
 VALUES
-('Tiếng Anh'),
 ('Tiếng Việt'),
-('Tiếng Nhật'),
+('Tiếng Anh'),
 ('Tiếng Hàn'),
-('Tiếng Trung'),
-('Tiếng Pháp'),
-('Tiếng Tây Ban Nha')
+('Tiếng Trung')
 ;
 
 INSERT INTO genre (name)
@@ -249,7 +252,7 @@ VALUES
 ('Việt Nam'),
 ('Mỹ'),
 ('Hàn'),
-('Trung'),
+('Trung')
 ;
 
 -- Tạo 100 câu lệnh INSERT riêng biệt cho bảng actor
@@ -347,8 +350,8 @@ INSERT INTO actor (name, gender) VALUES
 ('Liam Neeson', 'M'),
 ('Meryl Streep', 'F'),
 ('Liam Neeson', 'M'),
-('Judi Dench', 'F');
-
+('Judi Dench', 'F')
+;
 
 INSERT INTO director (name)
 VALUES
@@ -406,6 +409,13 @@ VALUES
 ('Wojciech Smarzowski'),
 ('Tomasz Konecki');
 
+INSERT INTO quality (id, description) VALUES
+(1, 'Ultra HD'),
+(2, 'Full HD'),
+(3, 'HD'),
+(4, 'SD')
+;
+
 INSERT INTO movie (title, subtitle, release_date, description, age_limit, duration, views, status, imdb, poster_img, trailer_link, movie_link, id_quality)
 VALUES
 ('The Shawshank Redemption', 'Ký ức mong manh', '1994-09-23', 'Andy Dufresne, một ngân hàng gia giàu, bị kết án oan vì tội giết vợ và nhân tình. Bị giam trong nhà tù Shawshank, anh kết bạn với Red và trải qua 19 năm tù đầy gian khổ. Nhờ ý chí kiên cường và lòng nhân ái, Andy dần lấy lại hy vọng và tìm kiếm sự cứu赎.', 18, 142, 3000, 'Visible', 9.3, 'https://i.pinimg.com/736x/22/a7/3f/22a73f1676192a1171a5a1db88df30a2.jpg', 'https://www.youtube.com/watch?v=UDx5qJz0O7g', 'https://www.imdb.com/title/tt0777521/', 1),
@@ -462,7 +472,7 @@ INSERT INTO movie_country (id_movie, id_country) VALUES
 (34, 4),(34, 2),(35, 2),(36, 2),(37, 1),(38, 2),(39, 3),(39, 2)
 ;
 
-INSERT INTO movie_country (id_movie, id_country) VALUES
+INSERT INTO movie_lang (id_movie, id_lang) VALUES
 (1, 1),(2, 2),(3, 3),(3, 2),(4, 2),(5, 1),(6, 3),
 (7, 1),(8, 2),(9, 3),(10, 2),(10, 3),(11, 2),(12, 2),(13, 1),(14, 2),(15, 3),
 (16, 4),(16, 2),(17, 2),(18, 2),(19, 1),(20, 1),(21, 1),(21, 2),(22, 1),(23, 2),(24, 3),
