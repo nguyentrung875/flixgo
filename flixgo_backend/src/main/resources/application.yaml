@@ -1,0 +1,18 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /flixgo
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/flixgo
+    username: root
+    password: 875879
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
